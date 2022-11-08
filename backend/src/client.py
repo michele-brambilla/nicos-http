@@ -39,6 +39,7 @@ class HttpClient(NicosClient):
 
 
 config = Settings()
-conndata = ConnectionData(config.hostname, config.port, config.nicos_user, config.password)
+print(config)
+conndata = ConnectionData(config.host, config.port, config.nicos_user, config.password)
 client = HttpClient(log)
 client.connect(conndata)

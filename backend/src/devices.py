@@ -26,10 +26,10 @@ class SetEncoder(json.JSONEncoder):
 @router.get("/")
 async def list_devices():
     devices = client.ask('eval', 'session.explicit_devices', {})
-    items = []
+    items = {}
     for devname in sorted([d.lower() for d in devices]):
-        items.append(client.getDeviceParams(devname))
-        # items.update({devname: client.getDeviceParams(devname)})
+        # items.append(client.getDeviceParams(devname))
+        items.update({devname: client.getDeviceParams(devname)})
     return json.loads(json.dumps(items, cls=SetEncoder))
     # return items
 

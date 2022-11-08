@@ -1,12 +1,13 @@
 import json
+import logging
 from typing import Union
 
 from fastapi import APIRouter
+from nicos.clients.http.backend.src.client import client
 from pydantic import BaseModel
 
-from nicos.clients.http.backend.src.client import client
-
-router = APIRouter(prefix="/devices",)
+router = APIRouter(prefix="/devices")
+log = logging.getLogger(__name__)
 
 
 class SetEncoder(json.JSONEncoder):
@@ -32,13 +33,14 @@ async def list_devices():
     return json.loads(json.dumps(items, cls=SetEncoder))
     # return items
 
+
 @router.get("/{device}")
-async def device(device:str):
+async def device(device: str):
     return client.getDeviceParams(device)
 
 
 @router.get("/{device}/{param}")
-async def device_param(device:str, param: str):
+async def device_param(device: str, param: str):
     return client.getDeviceParams(device).get(param)
 
 
@@ -59,11 +61,11 @@ class Action(BaseModel):
 
 
 @register('target')
-def drive_device(device:str, action: Action):
+def drive_device(device: str, action: Action):
     return f'maw({device}, {action.value})'
 
 
-def default_action(device:str, action: Action):
+def default_action(device: str, action: Action):
     return f'{device}.{action.param}={action.value}'
 
 
@@ -72,4 +74,16 @@ async def do_something(device: str, action: Action):
     req = actions_factory.get(action.param, default_action)(device, action)
     client.ask('queue', '', req)
     # check for success/failure
+    return 200
+
+
+@router.delete("/{device}")
+async def remove_device(device: str):
+    client.ask('queue', '', f'RemoveDevice({device})')
+    return 200
+
+
+@router.post("/{device}")
+async def create_device(device: str):
+    client.ask('queue', '', f'CreateDevice("{device}")')
     return 200

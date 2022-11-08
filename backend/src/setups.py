@@ -1,5 +1,4 @@
 from fastapi import APIRouter
-
 from nicos.clients.http.backend.src.client import client, log
 
 router = APIRouter(prefix="/setups",)
@@ -20,6 +19,18 @@ async def get_setup(setup: str):
         return 404
     value = setups[setup]
     return {setup: value}
+
+
+@router.delete("/{setup}")
+async def remove_setup(setup: str):
+    client.ask('queue', '', f'RemoveSetup("{setup}")')
+    return 200
+
+
+@router.post("/{setup}")
+async def create_setup(setup: str):
+    client.ask('queue', '', f'NewSetup("{setup}")')
+    return 200
 
 
 @router.get("/{setup}/devices")

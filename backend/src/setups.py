@@ -29,7 +29,7 @@ async def remove_setup(setup: str):
 
 @router.post("/{setup}")
 async def create_setup(setup: str):
-    client.ask('queue', '', f'NewSetup("{setup}")')
+    client.ask('queue', '', f'AddSetup("{setup}")')
     return 200
 
 

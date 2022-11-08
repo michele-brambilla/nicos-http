@@ -3,21 +3,21 @@
     <p>Devices</p>
 
     <table class="table table-striped">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Value</th>
-      <th>Status</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr v-for="device in devices" :key="device">
-       <th>{{ device.name }}</th> 
-       <td>{{ device.value }}</td>  
-       <td>{{ device.status }}</td>  
-    </tr>
-   </tbody>
-</table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Value</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(value, key) in devices.data" :key="key">
+          <th>{{ key }}</th>
+          <td>{{ value.value }}</td>
+          <td>{{ value.status }}</td>
+        </tr>
+      </tbody>
+    </table>
     <div id="app">
       <router-view></router-view>
     </div>
@@ -153,22 +153,22 @@ export default {
 </script> /-->
 
 <script>
+import axios from 'axios'
+
 export default {
+  devices: {'demo': {
+    status: null,
+    value: null
+  }
+  },
   data() {
-    console.println('hello')
-    return { devices: [] }
+    console.log('hello')
+    return { devices: this.devices }
   },
-  created() {
-    this.fetchName();
-  },
-  watch: {
-    // Re-fetch when route changes
-    '$route': 'fetchName'
-  },
-  methods: {
-    fetchName() {
-      this.devices =  this.$route.devices
-    }
+  mounted() {
+    axios
+      .get('http://localhost:5000/devices')
+      .then(response => (this.devices = response))
   }
 }
 </script>

@@ -1,6 +1,7 @@
 import logging
 
 from nicos.clients.base import ErrorResponse, NicosClient, ConnectionData
+from nicos.clients.http.backend.src.config import Settings
 
 log = logging.getLogger(__name__)
 
@@ -37,6 +38,7 @@ class HttpClient(NicosClient):
             return args[1]
 
 
-conndata = ConnectionData('localhost', 1301, 'guest', '')
+config = Settings()
+conndata = ConnectionData(config.hostname, config.port, config.nicos_user, config.password)
 client = HttpClient(log)
 client.connect(conndata)
